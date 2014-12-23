@@ -1,0 +1,48 @@
+
+system v 信号量都是计数信号量  一般每个集合的信号量数在25个的数量级上 我们在谈论system v 信号量的时候 实际上所指的是计数信号量级
+
+头结构在<sys/sem> 头文件中c
+struct semid_ds {
+   struct ipc_perm sem_perm; /*操作权限*/
+   struct sem *sem_base; /*sem数组 的指针*/
+   ushort  sem_nsems; /*数组中信号量的个数*/
+   time_t  sem_otime;
+   time_t sem_ctime; /*创建时间或者最后一个的信号量的创建时间*/
+}
+
+struct sem{
+   ushort_t semval;  /*value*/
+   short  sempid;  /**最后访问成功的进程pid*/
+   ushort_t semncnt; /*等待其增长的进成熟*/
+   ushort_t semzcnt; /**等待其值变为0 的进程数*/
+};
+
+访问或者创建一个信号量
+#include <sys/sem.h>
+int semget(key_t key, int nsems,int oflag);
+           成功返信号量的标识符 失败-1
+nsems 指定信号集中的信号量数
+
+
+
+用 semget打开的信号量级后,对其中一个或多个信号量的擦偶哦使用semop来执行
+#include <ysm/sen.h>
+int semop(int semdi,struct sembuf *opsptr,size_t mops);
+  成功为0  失败为-1
+
+osptr 指向如下结构
+struct sembuf{
+    short  sem_num;
+    short sem_op;
+    short sem_flg;
+
+}
+
+
+
+对信号量执行各种操作
+int semctl(int semid,int semmum,int cmd ,/***arg**/);
+  出错返回-1
+地一个参数指定信号量集  第二个指定信号量级的第几个信号量 从0开始
+
+

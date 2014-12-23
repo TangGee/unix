@@ -1,0 +1,26 @@
+#include "db.h"
+
+
+DB * db_open(const char *pathname,int oflag,int mode);
+  成功返回DB 指针 失败 返回NULL
+ void db_close(DB *db);
+
+
+成功会建立两个文件 pathname.idx 和 pathname.dat idx是索引文件 dat是数据文件啊
+
+char *db_store(DB *db,const char *key,const char *data,int flag);
+  			成功0 失败非0 
+    flag为 DB_INSERT 或者DB_REPLACE  如果DB_INSERT 插入的数据存在则返回1  
+   key为主见的值    data为数据   都以NULL结尾
+     如果DB_REPLACE 的记录不存在返回-1
+
+char *db_fetch(DB *db,const char *key);
+   成功返回指向数据的指针 失败返回NULL
+
+int db_delete(BD *db, const char *key); 通过key从数据库删除一条数据
+
+void db_rewind(DB *db)  返回到数据库第一条记录
+char * db_nextrec(DB *db,char *key);  读取吓一跳记录
+
+:wq
+

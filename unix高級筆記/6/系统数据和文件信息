@@ -1,0 +1,47 @@
+#include <sys/types>
+<pwd.h>
+struct passwd *getpwuid(uid_t uid); 通过id查看用户信息  passwd中的 ls用这个命令比对文件访问权限
+struct passwd *getpwnam(const char *name); 用于登录 
+
+
+struct passwd *getpwent(void)  获取所有的passwd文件信息  查看完一定使用endpwent 关闭
+void setpwent(void)  反绕文件 
+void endpwent(void)
+
+
+查看组名 和数值组ID
+<grp.h>
+struct group *getgrgid(gid_t id) ;
+getgrname(const char *name
+
+怎对口令文件的 
+struct group *getgrent(void))
+struct setgrent(void)
+struct endgrent(void)
+
+存取和设置添加组
+getgroups
+setgoups
+initgroups 
+
+
+查看系统信息
+uname函数
+
+
+获取主机名
+gethostname
+
+time 返回当前时间和日期  返回从1970.1.1 开始经过的时间
+
+gettime   变换成攻击时间
+localtime  变成本地时间 考虑夏时和地区标志
+
+mktime 根据年月日生成time_t
+
+astime 
+ctime  返回字符串
+
+strftime 是非常负载的printf类时间函数
+
+

@@ -1,0 +1,22 @@
+#include <unistd.h>
+int access(const char *pathname ,int mode); 访问一个文件
+
+#include <sys/stat.h>
+mode_t umask(mode_t cmask);  为进程设置屏蔽字  设置进程的umask不影响父进程
+
+chmod fchmod函数  前者对制定路径设置  后者对描述符设置 必须是属主或者root才可以:
+
+
+chown fchown lchown  chown是对文件  fchown对描述符 lchown只改变符号链接本身 不改变所指向的文件 lchown只有svr4 支持 
+
+truncate 和ftruncate 截短文件
+link函数创建硬链接] unlink删除硬链接
+unlink 在程序中打开的文件 即使连接数为0 也不真正从磁盘中删除  但是目录中以没有该表项 知道程序退出或者关闭该文件才从磁盘中删除 这种特性常用来保证即使程序崩溃 也删除他所创建的临时文件 
+
+remove函数对于文件与unlink作用相同 对于目录则和rmdir相同
+rename函数用于更名文件
+
+
+dev_t 存放的设备号  st_rdev 存放文件系的设备号 只有字符设备或者块设备才有st_rdev
+
+sync fsync   前者针对所有文件后者针对单个文件  是将有修改过的块缓存排入写队列 就返回 

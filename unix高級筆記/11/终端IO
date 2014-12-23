@@ -1,0 +1,36 @@
+POSIX.1 终端IO控制函数 
+tcgetattr  取属性 termios结构 
+tcsetattr 设置属性 termios结构
+cfgetuspeed 得到输入速度
+cfgetospeed 得到输出速度
+cfsetispeed 设置输入速度
+cfsetospeed 设置输出速度
+tcdrain  等待所有输出都被传输
+tcflow 挂起传输或接收 
+tcflush 刷清未决输入和/输出
+tcsendbreak  送break 删除 字符
+tcgetpgrp 获取前台进程组ID
+tcsetpgrp 设置前台进程组ID
+
+
+
+#incldue <termios.h>
+
+设置termios 
+int tcgetattr(int filedes,struct termios *termptr);
+int tcsetattr(int filedes,int opt,const struct termios *termptr);
+    成功0 失败-1 
+如果filedes 不是终端设备则出错  errno= ENOTTY   tcsetattr函数不保证所有的设置在都被执行 如果有一个被设置就返回0  所以我们需要调用tcgetattr进行比较
+
+破特率  位/秒 虽然大多数输出输入设备使用同一波特率 但是只要硬件许可 可以设置为不同的值 
+
+#include <termios.h>
+
+speed_t cfgetispeed(const struct termios *termptr);
+speed_t cfgetospeed(const struct termios *termptr);
+   //返回波特率值 
+
+speed_t cfsetispeed(struct termios *termptr,speed_t speed);
+speed_t cfsetospeed(struct termios *termptr,speed_t speed);
+   成功0 失败-1
+

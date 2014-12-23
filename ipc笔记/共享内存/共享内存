@@ -1,0 +1,27 @@
+
+#include <sys/mman.h>
+
+void *mmap(void *addr, size_t len,int prot,int flags,int fd, off_t offset);
+                     成功返回被映射区域的其实地址 失败返回MAP_FAILED
+
+addr指定映射的到内存地址 我们通常将其设置为NULL 让内核自己选择地址
+len指映射的长度
+offset指从文件哪个位置开始映射
+port代表读写权限  读写为PORT_READ|PROT_WRITE
+flags 为MAP_PRIVATE MAP_SHARED 而选一 如果是private的 则不真实该改变文件 只有本进程可见  
+
+父进程mmap申请的空间对子进程可见
+
+mmap之后关闭fd无影响 
+
+int munmap(void *attr,size_t len);
+
+同步内存映射区和文件的内容:
+int msync(void *addr,size_t len,int flags);
+  成功返回0  失败返回-1
+
+flags:
+ MS_ASYNC  异步写  只要数据已在内核写排队立即返回
+ MS_SYNC 执行同步写  写完才返回
+ MS_INVALIDATE  使高速缓存的数据失败  如果后续内存中与文件不一致就会以文件为准
+ MS_ASYNC 和 MS_SYNC 必须指定一个

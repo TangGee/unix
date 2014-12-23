@@ -1,0 +1,20 @@
+#include <sys/types.h>
+#include <unistd.h>
+
+pid_t getpgrp(void);  返回进程的进程组ID
+
+int setpgid(pid_t pid,pid_t pgid); 创建一个进程组
+
+对话期: 多个进程组组成一个对话期
+pid_t setsid(void); 创建一个对话其  成功为进程组ID  失败为-1 如果调用该函数的不是进程组长就创建一个新对话期  如果进程是进程组长那么出错 通常fork一个程序创建对话期 这样它就不可能是进程组长
+
+pid_t tcgetpgrp(int filedes); 返回进程组ID
+int tcsetpgrp(int filedes,pid_t pgrpid)； 有控制台才可以设置终端 
+
+
+#include <signal.h>
+
+void (*signal(int signo, void (*func)(int))) (int );
+这个函数提供不可靠的信号处理 不要用
+
+我们会实现是个用sigaction处理的signal函数    func的值有SIG_IGN SIG_DEF

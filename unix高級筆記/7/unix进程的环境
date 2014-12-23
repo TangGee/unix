@@ -1,0 +1,48 @@
+#include <stdlib.h>  ANSI C说明
+exit 执行清理后进入内核
+
+#include <unistd.h>
+_exit 直接进入内核  不清理  POSIX 1说明
+
+登记一些函数 最多32个 由exit后自动调用  
+#include <stdlib.h>
+int atexit(void (*func) (void));  以登记的相反顺序调用 失败返回非0
+同一函数登记多次就被调用多次
+
+是
+
+存储器分配  在堆中
+<stdlib.h>
+malloc 分配指定空间 不初始化
+calloc 分配n个指定大小的内存  初始化为0
+realloc 重新分配大小 新增区域内值不定  新分区大小 不是需要增加减少大小
+free 释放申请的空间
+
+
+alloca 在栈上申请空间 当函数返回时自动清理申请的栈
+
+
+getenv 查看相应环境变量的值v
+
+设置环境变量
+putenv
+setenv
+
+unsetenv 删除
+
+
+非局部跳转
+#include<setjmp.h>
+int setjmp(jmp_buf env); 直接调用为0 从longjmp返回非0  是val
+int longjmp(jmp_buf env,int val);  如果调用longjmp就跳转带setkmp处
+
+调用longjmp上栈的值回不回滚是不确定的 要是不想让它回滚使用volatile 不要使用编译器优化
+
+没一个进程都有资源限制 用下面两个函数获取或者修改
+#incldue <sys/time.h>
+#include<sys/resource.h>
+int getrlimit(int resource,struct rlimit *rlptr);
+int setrlimit(int resource,const cstruct rlimit *rlptr)
+
+
+

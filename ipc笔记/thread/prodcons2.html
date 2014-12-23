@@ -1,0 +1,86 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+#include "unpipc.h</br>
+#include "../lib/wrappthread.c</br>
+#include <errmethod.h>
+
+
+#define MAXNITEMS 100000</br>
+#define MAXNTHREADS 10</br>
+
+
+int nitems</br>
+
+struct </br>
+	pthread_mutex_t mutex</br>
+	int buff[MAXNITEMS]</br>
+	int nput;//下一次存放的下</br>
+	int nval;//下一次存放的</br>
+}shared=</br>
+	PTHREAD_MUTEX_INITIALIZE</br>
+}</br>
+
+void *produce(void *)</br>
+void *consume (void *)</br>
+
+int main(int argc, char ** argv</br>
+</br>
+	int pthreadcount,i</br>
+	int count[MAXNTHREADS]</br>
+	pthread_t tid_consume,tid_produce[MAXNTHREADS]</br>
+
+	if(argc!=3</br>
+		err_quit("usage : <ntimes> <threadcount>")</br>
+
+	nitems=min(atoi(argv[1]),MAXNITEMS)</br>
+	pthreadcount=min(atoi(argv[2]),MAXNTHREADS)</br>
+
+	Set_concurrency(pthreadcount)</br>
+
+	for(i=0;i<pthreadcount;i++</br>
+	</br>
+		count[i]=0</br>
+		Pthread_create(&tid_produce[i],NULL,produce,&count[i])</br>
+	</br>
+
+	for(i=0;i<pthreadcount;i++</br>
+	</br>
+		Pthread_join(tid_produce[i],NULL)</br>
+		printf("count[%d] = %d\n",i,count[i])</br>
+	</br>
+
+
+	Pthread_create(&tid_consume,NULL,consume,NULL)</br>
+	Pthread_join(tid_consume,NULL)</br>
+
+</br>
+
+void *produce (void *arg</br>
+</br>
+	for(;;)</br>
+		Pthread_mutex_lock(&shared.mutex)</br>
+		if(shared.nput>=nitems)</br>
+			 Pthread_mutex_unlock(&shared.mutex)</br>
+			 return NULL</br>
+		</br>
+
+		shared.buff[shared.nput++]=shared.nval++</br>
+		 Pthread_mutex_unlock(&shared.mutex)</br>
+		 (*((int *)arg))+=1</br>
+
+
+	</br>
+</br>
+
+void *consume(void *arg</br>
+</br>
+	int i</br>
+	for(i=0;i<nitems;i++</br>
+		if(shared.buff[i]!=i</br>
+			printf("buff[%d] = %d\n",i,shared.buff[i])</br>
+
+	return NULL</br>
+</br>
+
+
+
+

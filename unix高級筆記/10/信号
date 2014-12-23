@@ -1,0 +1,44 @@
+这是复杂的一张 你要好好学!!!
+kill和raise函数 kill函数给进程或者进程组发送信号 raise给自身发送信号
+
+#include <sys/types.h>
+#include <signal.h>
+
+int kill(pid_t pid,int signo);
+int raise(signo);
+成功返回0  失败-1
+
+unsigned int alram(unsigned int seconds);  差生SIGALRM 信号 默认处理为中止程序
+如果还有没超时的 设置alram(0) 则取消超时设置
+
+#incldue <unsitd.h>
+int pause(void); 使程序挂起 知道捕捉信号  饭或-1
+ errno设置为EINTR
+
+
+#include <signal.h>
+
+int sigemptyset(sigset_t *set);  清空信号集
+int sigfillset(sigset_t *set);    初始化信号集 使其包含所有信号
+int sigaddset(sigset_t *set,int signo); 添加一个信号到信号集
+int sigdelset(sigset_t *set,int signo); 删除一个信号到信号集
+              四个函数 : 成功返回0  失败-1
+ 
+int sigismember(const sigset_t *set,int signo); 查看信号集是否包含该信号 成功1 失败0  
+信号集是当前阻塞而不能递交给进程该进程的信号集
+
+int sigprocmask(int how,const sigset_t *set, sigset_t *oset);
+
+#include <signal.h>
+int sigpending(siget_t *set);
+取出被阻塞而未决的信号量集合  未决就是信号发生了 由于阻塞还未传递给进程处理
+
+
+
+int sigaction (int signo,const struct sigaction *act, struct sigaction *oact);
+
+
+在信号中处理非局部转移应该用sigsetjmp和 siglongjmp函数  因为sigaction函数会阻塞信号 这两个函数在跳转中可以恢复阻塞的信号
+
+
+sigsuspend函数 当处理完屏蔽子之后这个函数就会从挂起中返回 参数指定从那些处理信号函数中返回

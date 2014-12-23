@@ -1,0 +1,161 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></br>
+
+
+
+ * 1 首先定义数组最大下标  最大线程</br>
+ </br>
+ * 全局变量 操作次</br>
+ * 数组 存放数</br>
+ </br>
+ * 匿名 结构体  put 包含变量 pthread_mutex_t mutex nput下一个要写入的</br>
+ *  nval 下一个要写入的</br>
+ * 初始化 put PTHREAD_MUTEX_INITIALIZE</br>
+ </br>
+ * nread </br>
+ * pthread_mutex_t mute</br>
+ * pthread_cond_t cond</br>
+ * int nready</br>
+ * 初始化  pthread_cond_t 要用PTHREAD_COND_INITIALIZER 初始</br>
+ </br>
+ *</br>
+
+#include "unpipc.h</br>
+#include "../lib/wrappthread.c</br>
+#include <errmethod.h>
+
+
+
+#define MAXNITEMS 100000</br>
+#define MAXNTHREADS 10</br>
+
+
+int nitems</br>
+int buff[MAXNITEMS]</br>
+
+struct </br>
+	pthread_mutex_t mutex</br>
+	int nput</br>
+	int nval</br>
+}put =</br>
+	PTHREAD_MUTEX_INITIALIZE</br>
+
+}</br>
+
+struct </br>
+	pthread_mutex_t mutex</br>
+	pthread_cond_t cond</br>
+	int nready</br>
+}nread=</br>
+	PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZE</br>
+}</br>
+
+
+
+
+void *produce(void *)</br>
+void *consume (void *)</br>
+
+int main(int argc, char ** argv</br>
+</br>
+	int pthreadcount,i</br>
+	int count[MAXNTHREADS]</br>
+	pthread_t tid_consume,tid_produce[MAXNTHREADS]</br>
+
+	if(argc!=3</br>
+		err_quit("usage : <ntimes> <threadcount>")</br>
+
+	nitems=min(atoi(argv[1]),MAXNITEMS)</br>
+	pthreadcount=min(atoi(argv[2]),MAXNTHREADS)</br>
+
+	Set_concurrency(pthreadcount)</br>
+
+	for(i=0;i<pthreadcount;i++</br>
+	</br>
+		count[i]=0</br>
+		Pthread_create(&tid_produce[i],NULL,produce,&count[i])</br>
+	</br>
+
+	for(i=0;i<pthreadcount;i++</br>
+	</br>
+		Pthread_join(tid_produce[i],NULL)</br>
+		printf("count[%d] = %d\n",i,count[i])</br>
+	</br>
+
+
+	Pthread_create(&tid_consume,NULL,consume,NULL)</br>
+	Pthread_join(tid_consume,NULL)</br>
+											</br>
+</br>
+
+
+void *produce(void *arg</br>
+</br>
+	for(;;)</br>
+		Pthread_mutex_lock(&put.mutex)</br>
+		if(put.nput>=nitems)</br>
+			Pthread_mutex_unlock(&put.mutex)</br>
+			return NULL</br>
+		</br>
+		buff[put.nput++]=put.nval++</br>
+		Pthread_mutex_unlock(&put.mutex)</br>
+
+		Pthread_mutex_lock(&nread.mutex)</br>
+		//如果消费者在wait状态下(意味着 nread.nready==0 则唤醒之 被唤醒之后还是要等待锁的</br>
+		if(nread.nready==0</br>
+			Pthread_cond_signal(&nread.cond)</br>
+
+		nread.nready++</br>
+		Pthread_mutex_unlock(&nread.mutex)</br>
+		(*(int *)arg) +=1</br>
+
+
+
+	</br>
+</br>
+void *consume (void *arg)</br>
+</br>
+	int i</br>
+	for(i=0;i<nitems;i++)</br>
+		//要先获取锁 然后判断获取信</br>
+		Pthread_mutex_lock(&nread.mutex)</br>
+		while(nread.nready==0</br>  // 阻塞到这里 他要先拿到锁才可以唤</br>
+		//醒在这里进入睡眠</br>
+		  Pthread_cond_wait(&nread.cond,&nread.mutex);</br>
+
+		nread.nready--</br>
+
+		//这里只同步nready  所以操作完nready就尽快释放</br>
+		Pthread_mutex_unlock(&nread.mutex)</br>
+
+
+		if(buff[i]!=i</br>
+		</br>
+			printf("buff[%d]!= %d\n", i,buff[i])</br>
+		</br>
+
+
+	</br>
+	</br>
+
+	return NULL</br>
+</br>
+
+
+
+
+/**</br>
+ * 这段代码存在一个缺陷就是当 生产这唤醒消费者的时候 生产者还持有消费者需要的锁</br>
+ * 所以消费者会睡眠在哪里 浪费性能 改进方法</br>
+
+ int  dosignal;</br>
+ Pthread_mutex_lock(&nready.mutex);</br>
+ dosignal =(nread.nreadt==0);</br>
+ nread.nready++;</br>
+ Pthread_mutex_unlock(&nready.mutex);</br>
+
+ if(dosignal)</br>
+   Pthread_cond_signal(&nready.cond);</br>
+
+
+

@@ -1,0 +1,64 @@
+<html>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></br>
+
+<body>
+int pthread_create( ptread_t tid, pthread_attr_t *attr,void *(* handler)(*void ), void *arg </br>
+
+第二个参数是设置线程属性的</br>
+第三个参数的线程要调用的方</br>
+第四个参数是第三个参数返回值 </br>
+
+
+
+#include <pthread.h>
+
+int pthread_mutex_lock(pthread_mutex_t *mptr)</br>
+int pthread_mutex_trylock(pthread_mutex_t *mptr)</br>
+int pthread_mutex_unlock(pthread_mutex_t *mptr)</br>
+           返回0   错误返回正 Exx</br>
+
+
+第二个参数是设置线程属性的</br>
+第三个参数的线程要调用的方</br>
+第四个参数是第三个参数返回值 </br>
+
+
+例</br>
+<a href="prodcons2.c">例子========生产者消费者模型=========</a>
+
+</br>
+第三个参数的线程要调用的方</br>
+第四个参数是第三个参数返回值 </br>
+
+
+pthread_mutex_lock(pthread_mutex *mutex)</br>
+pthread_mutex_unlock(pthread_mutex *mutex)</br>
+例</br>
+
+
+
+
+
+
+
+
+
+
+pthread_mutex  当是局部全局变量 静态初始</br>
+pthread_mutex= PTHREAD_MUTEX_INITIALIZE</br>
+
+在还需要调用set_cocurrency 是指一共有多少个线程并</br>
+
+
+条件变量  就是我们操作系统中学得信号</br>
+
+#include <pthread.h>
+
+
+int pthread_cond_wait(pthread_cond_t *cptr, pthread_mutex_t *mptr)</br>
+int pthread_cond_signal(pthread_cond_t *cptr)</br>
+              返回: 成功为0  失败为正Exxx</br>
+
+</body>
+<html>

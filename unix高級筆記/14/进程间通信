@@ -1,0 +1,20 @@
+#include <unistd.h>
+int pipe(int filedes[2]);
+   成功0  出错-1
+产上两个描述副  fd[0]是读端  fd[1]是写端  父进程和子进程通过这两个fd通信啊   fstat的 stat结构中的st_size可能返回管道中可读数据  但是不保证 所以不具有移植能力
+
+
+FILE *popen(const char *cmdstring,const char *type);
+           返回: 成功则为文件指针,若出错则为NULL
+int pclose(FILE *fp);
+     cmdstring的终止状态 出错返回-1
+
+
+
+
+fifo
+#include <sys/types.h>
+#include<sys/stat.h>
+
+int mkfifo(const char *pathname,mode_t mode);
+

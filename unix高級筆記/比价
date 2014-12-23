@@ -1,0 +1,27 @@
+lseek 容许创建 稀疏的文件
+pwrite 和pread 原子的写读 
+
+dup 和dup2 用于复制一个文件描述符 生成的文件描述符与原有的指向同一个文件表项
+
+dup相当与 fcntl(files,F_DUPFD,0);
+
+sync 函数将改变的内容放入内核缓冲队列返回 并不等待
+fsync 对指定的单一文件其作用  并等待结束 才返回
+fdatasync 比fsync 多了同步更新文件属性功能
+
+fcntl 改变已经打来的文件的性质
+#include <fcntl.h>
+
+int fcntl(int filedes,int cmd,.../*int arg */);
+  出错返回-1
+
+
+ioctl 设置i/o操作
+
+/dev/fd/n 打开该文件等于复制描述符号n 前提n是打开的 fd=open("/dev/fd/0",mode); 如果描述符先前为只读我们也只能对复制的描述符进行只读操作 所以mode是无效的
+/dev/stdin /dev/stdout等同于 /dev/fd/0|1 ...
+
+stat 根据文件名称 获取文件的信息
+fstat 根据描述符获取文件信息
+lstat 跟stat类似 不过如果是链接符号则返回链接的信息 不返回链接指向文件
+

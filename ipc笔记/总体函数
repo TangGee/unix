@@ -1,0 +1,146 @@
+system V ipc的所有函数
+msget               semget                          shmget
+msgctl              semctl                          shmctl
+msgsnd              semop                           shmat
+msgrcv                                              shmdt
+
+
+获取 system v ipc key键 (用于创建ipc)
+#include <sys/ipc.h>
+key_t ftok(const char *pathname,int id);   
+                  成功返回ipc键 出错-1   id不能为0  0 有特殊用处
+
+ int msgget(key_t key, int msgflg);
+成功返回描述符 失败-1
+消息队列有一些内核限制 sysconfig -q ipc 查看
+
+
+管道
+#include <unistd.h>
+int pipe(int fd[2]); 创建管道
+  成功 0 失败-1
+
+#include <stdio.h>
+
+FILE *popen(const char **command,const char *type);  command为shell命令
+      成功文件指针 失败NULL
+int pclose(FILE *stream);
+  成功shell终止状态 失败-1   
+
+
+有名管道
+#include <sys/types.h>
+#include <sys/stat.h>
+
+int mkfifo(const char *pathname,mode_t mode);
+       成功0 失败-1  pathname 是文件的路径也是该fifo的名字
+
+
+
+
+消息队列
+#include <mqueue.h>
+mqd_t mq_open(const char *name,int oflag,.../* mode_t mode,
+struct mq_attr *attr);
+      成功返回消息队列描述符 失败-1
+
+#include <mqueue.h>
+int mq_close(mqd_t mqdes);
+  成功 0  错误-1
+
+#include <mqueue.h>
+int mq_unlink(const char *name);
+   成功0 错误-1
+#include <mqueue.h>
+int mq_getattr(mqd_t mqdes,struct mq_attr *attr);
+int mq_setattr(mqd_t mqdes,const struct mq_attr *attr,struct mq_attr *oattr);
+  成功 0 错误-1
+#include <mqueue.h>
+int mq_send(mqd_t mqdes,const char *ptr,size_t len,unsigend int proi);
+                成功0  失败-1
+ssize_t mq_receive(mqd_t mqdes,char *ptr,size_t len,unsigend int *priop);
+                成功获取消息中字节数  失败-1
+
+#include <mqueue.h>
+int mq_notify(mqd_t mqdes,const struct sigevent *notification);
+        成功0  失败-1
+
+system v 消息队列
+#include <sys/msg.h>
+int msgget(key_t key ,int oflag);
+      成功非负数标识符 失败-1
+
+#include <sys/msg.h>
+int msgsnd(int msqid,const void *ptr,size_t length,int flag);
+       成功0  失败-1
+ssize_t msgrcv(int ,sqid,void *ptr,size_t length,long type ,int flag);
+      成功读入缓冲区的子节数 失败-1
+int msgctl(int msgid,int cmd,struct msqid_ds *buff);
+
+
+同步
+#include <pthread.h>
+int pthread_mutex_lock(pthread_mutex_t *mptr);
+int pthread_mutex_tryloc(pthread_mutex_t *mptr);
+int pthread_mutex_unlock(pthread_mutex_t *mptr);
+     成功 0  失败正Exxx
+
+int pthread_cond_wait(pthread_cond_t *cptr,pthread_mutex_t *mutex)
+int pthread_conf_signal(pthread_cond_t *cptr) ;
+
+int pthrad_cond_broadcast(pthread_cond_t *cptr);
+int pthread_cond_timewait(pthrad_cond_t *ptr,pthread_mutex_t *mptr,
+const struct timespec *abstime);
+
+
+读写锁
+#include <pthread>
+int pthread_rwlock_rdlock(pthread_rwlock_t *rwptr);
+int pthread_rwlock_wrlock(pthread_rwlock_t *rwptr);
+int pthread_rwlock_unlock(pthread_rwlock_t *rwptr);
+int pthread_rwlock_tryrdlock(pthread_rwlock_t *rwptr);
+int pthread_rwlock_trywrlock(pthread_rwlock_t *rwptr);
+int pthread_rwlock_init(pthread_rwlock_t *rwptr,
+        const pthread_rwlockattr_t *attr);
+int pthread_rwlock_destory(pthread_rwlock_t *rwptr);
+int pthread_rwlockattr_init(pthread_rwlockattr_t *attr);
+int pthread_rwlockattr_destory(pthread_rwlockattr_t *attr);
+int pthread_rwlockattr_getpshared(pthread_rwlockattr_t *attr,int *valptr);
+int pthread_rwlock_rdlock(pthread_rwlockattr_t *attr,int value);
+   成功0 失败 正Exxx
+
+线程取消
+int pthread_cancle(pthread_t tid);
+void pthread_cleanup_push(void (*function)(void *),void *arg);
+void pthread_clean_pop(int execute);
+
+记录上锁 
+#include <fcntl.h>
+fcntl(int fd,int cmd,.../*struct flock *arg */);
+
+posix信号量
+#include <semaphore.h>
+sem_t *sem_open(const char *name,int oflag,... /* mode_t mode,unsigned int value*/);
+            返回:若更改则为指向信号量的指针 失败测SEM_FAILED
+int sem_close(sem_t *sem);
+int sem_unlink(const char *name);
+int sem_wait(sem_t *sem);
+int sem_trywait(sem_t *sem);
+int sem_post(sem_t *sem);
+int sem_getvalue(sem_t *sem,int*valp);
+int sem_init(sem_t *sem,int shared,unsigned int value);
+int sem_destory(sem_t *sem);
+             返回: 成功0 失败-1
+
+
+
+
+
+共享内存:
+#include<sys/mman.h>
+void *mmap(void *addr,size_t len,int port,int flags,int fd,off_t offset);
+          返回: 成功映射区的起始地址 失败MAP_FAILED
+int munmap(void *addr,size_t len);
+int msync(void *attr,死则_t len,int flags);
+          返回: 成功为0  ,失败为-1
+

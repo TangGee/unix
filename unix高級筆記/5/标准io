@@ -1,0 +1,97 @@
+标准IO
+
+一般终端设备是行缓存 
+标准错误是不缓存 
+其他全缓存
+
+void setbuf(FILE *fp,char *buf) 设置有无缓存 buf为缓存区 NULL 表示不缓存
+void setvbuf(FILE *fp,char *buf,int mode, size_t size);  设置缓存类型 通过mode 如果buf为NULL 而mode不是_IONBUF 就系统分配适当缓存区大小
+   成功0  失败非0
+
+强制刷新一个流   fflush  出错EOF 如果参数为NULL 刷新所有
+
+打开标准IO
+fopen  打开路径所指的文件
+freopen  用于在指定的文件打开一个欲定义的流
+fdopen 通过fd打开
+fclose关闭流
+
+从流中对去一个字符
+getc  这可能是一个宏  所以不能作为函数的参数
+fgetc   fgetc需要的时间可能要长与getc
+getchar  标准输入输出
+
+查看错误原因
+ferror    检查错误标志
+feof      检查结束标志EOF
+clearerr  清除 
+
+ungetc 将读取的字符再送回流 
+
+添加一个字符
+putc  可能是宏
+fputc
+putchar 标准输入输出
+
+
+读出一行
+fgets
+gets  标准输入输出 这个没有要求读多少的参数 请不要使用 可能造成缓冲区溢出攻击 
+
+
+写入一行
+fputs
+puts 避免使用
+
+
+读写二进制文件  遇到0的时候不会中断
+fread
+fwrite
+
+
+定位流
+ftell  成功返回当前文件位置  出错返回-1L   用于非二进制
+fseek 成功返回0 错误非0  用于二进制定位  参数类似lseek
+rewind 
+
+fgetops  设置流位置
+fsetops  将流重新定位到这个位置
+
+
+格式化io
+printf  格式化到标准输出
+fprintf  给是化到制定的 流
+sprintf  格式化到字符串  末尾加一个NULL  但并不包含在返回值里面 可能造成缓冲区溢出 保证足够长度是调用者的责任
+
+vprintf 出处到标准输出
+vfprintf 流
+vprintf  字符串       这些都是将前边的变长参数换成va_list
+
+格式化输出
+scanf  标准输入
+fscanf 从流
+sscanf 从字符串
+
+
+从流中获取文件描述符
+fileno
+
+
+
+创建临时文件
+tmpnam  产生一个文件名供下面函数调用 这个函数是危险的  应该使用mkstemp代替
+tmpfile  产生临时文件
+
+tempnam是tmpnam的变体 
+
+
+
+标准IO的替代方案  由于标准IO要复制数据到用户空间 增加了开销 
+替代都是减少这次复制的软件包 其中有 fio  sfio   asi
+
+
+
+
+
+
+

@@ -1,0 +1,180 @@
+<html>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></br>
+
+<body>
+int pthread_create( ptread_t tid, pthread_attr_t *attr,void *(* handler)(*void ), void *arg </br>
+
+第二个参数是设置线程属性的</br>
+第三个参数的线程要调用的方</br>
+第四个参数是第三个参数返回值 </br>
+
+
+
+#include <pthread.h>
+
+int pthread_mutex_lock(pthread_mutex_t *mptr)</br>
+int pthread_mutex_trylock(pthread_mutex_t *mptr)</br>
+int pthread_mutex_unlock(pthread_mutex_t *mptr)</br>
+           返回0   错误返回正 Exx</br>
+
+
+第二个参数是设置线程属性的</br>
+第三个参数的线程要调用的方</br>
+第四个参数是第三个参数返回值 </br>
+
+
+例</br>
+<a href="prodcons2.html">例子========生产者消费者模型=========</a>
+
+</br>
+第三个参数的线程要调用的方</br>
+第四个参数是第三个参数返回值 </br>
+
+
+pthread_mutex_lock(pthread_mutex *mutex)</br>
+pthread_mutex_unlock(pthread_mutex *mutex)</br>
+例</br>
+
+
+
+
+
+
+
+
+
+用户块数据之间的同步
+pthread_mutex  当是局部全局变量 静态初始</br>
+pthread_mutex= PTHREAD_MUTEX_INITIALIZE</br>
+
+在还需要调用set_cocurrency 是指一共有多少个线程并</br>
+
+
+条件变量  就是我们操作系统中学得信号</br>
+
+#include <pthread.h>
+
+
+int pthread_cond_wait(pthread_cond_t *cptr, pthread_mutex_t *mptr)</br>
+int pthread_cond_signal(pthread_cond_t *cptr)</br>
+              返回: 成功为0  失败为正Exxx</br>
+
+	      例子: <a href=" prodcons6.html">-==========信号机制例子-============== </a> <br>
+
+
+
+定时等待和广播 
+一个线程完成发起广播  唤醒其他进程
+
+#include <pthread.h>
+
+int pthhread_mutex_init(pthread_mutex_t *mptr,const pthread_mutexattr_t *attr);
+int pthread_mutex_destory(ptread_mutex_t *mptr);
+int pthread_cond_init(pthread_cond_t *cptr,cont pthread_condattr_t *attr);
+int pthread_cond_destory(pthread_cond_t *cptr);
+           成功返回0   否则返回正Exxx
+
+
+	   ptread_mutexattr_t 和 pthread_condattr_t 分别是设置 pthrea_mutex_t 
+	   和pthread_cond_t的变量
+
+创建和销毁这两个变量的方法:
+     include <pthread.h>
+     int pthread_mutexattr_init(pthread_mutexattr_t *attr);
+     int pthread_mutexattr_destory(pthread_mutexattr_t *attr);
+     int pthread_condattr_init(pthread_condattr_t *attr);
+     int pthread_condattr_destory(pthread_condattr_t *attr);
+            成功返回0  失败返回正Exxxx
+
+
+	    当线程的锁已经确定属性  我们还可以通过一些方法改变  一下
+	 int pthread_mutexattr_setpshared(const pthread_mutexattr_t *attr, int *valptr);
+	 int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr,int value);
+	 int pthread_condattr_getpshared(const pthread_condattr_t *attr, int *valptr);
+	 int pthread_condattr_setpshared(pthread_condattr_t *attr,int value);
+	   
+	 这几个函数是获取和设置锁 在进程见共享的函数
+	 value的值可以是PTHREAD_PROCESS_PRIVATE 或者PTHREAD_PROCESS_SHARED
+
+	 一下代码片段是初始化一个互赤锁一边进程间共享的过程:
+	 pthread_mutex_t *mptr;
+	 pthread_mutexattr_t mattr;
+
+	 mptr=/**some value that points to shared memory/
+
+	 Pthread_mutexattr_init(&mattr);
+	 pthread_mutexattr_setpshared(&mattr,PTHREAD_PROCESS_SHARED);
+	 pthread_mutex_init(mptr,&mattr);
+
+
+
+
+
+
+
+读写锁
+
+类型 pthread_rwlock_t 静态分配可以给他赋值 PTHREAD_RWLOCK_INITIALIZER
+
+一些获取读写锁的方法
+int pthread_rwlock_rdlock(pthread_rwlock_t *rwptr); 如果有线程在写 就阻塞
+int pthread_rwlock_wrlock(pthread_rwlock_t *rwptr);如果有线程读或i写就阻塞
+int pthread_rwlock_unlock(pthread_rwlock_t *rwptr);   释放锁
+     返回值  成功返回0  失败返回正Exxx
+
+     下面是尝试获取读锁或者写锁的函数 如果不能得到直接返回EBUFY错误
+
+     读写锁动态初始化和销毁
+     int pthread_rwlock_init(pthread_rwlock_t *rwptr,const pthread_rwlockattr_t *attr);
+
+     int pthread_rwlock_destory(pthread_rwlock_t *rwptr);
+
+如果attr为空就是默认属性哦  初始化和销毁attr
+int pthread_rwlockattr_init(pthread_rwlockattr_t *attr);
+int pthread_rwlockattr_destory(pthread_rwlockattr_t *attr);
+
+设置完属性要修改的一些函数 目前唯一的就是设置进程见共享属性哦
+int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *attr,int *valptr);
+int pthread_rwlockattr_setpshared(const pthread_rwlockattr_t *attr,int valptr);
+
+
+
+同一个进程中的线程取消其他线程
+int pthread_cancel(pthread_t tid);
+
+任何线程都可以添加和删除被取消时候的清理进程
+
+void pthread_cleanup_push(void (*function)(void *),void *arg); arg是function的参数
+void pthread_cleanup_pop(int execute);
+清理函数发生在如下情况被调用
+  1 调用线程被取消
+  2调用线程自愿终止  (通过调用pthread_exit 或者自己返回)
+
+  如果execute 不为0 就调用清理函数后删除  如果为0 直接删除清理函数
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+<html>

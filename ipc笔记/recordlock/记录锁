@@ -1,0 +1,33 @@
+#include <fcntl.h>
+
+int fantl(int fd,int cmd,.../*struct flock *arg */);
+
+
+
+struct flick{
+  short l_type;  /**F_RDLCK,F_WRLCD,F_UNLCK */
+  short l_whence; /* SEEK_SET ,SEEJ_CUR, SEEK_END */
+ off_t l_start;   /*锁住文件的起始偏移  一就是只有start到len的范围内被该锁锁定*/
+  off_t l_len;   /*如果为0  表示一直到文件结尾*/
+  off_t pid;      
+};
+
+
+cmd的三个值
+
+F_SETLK 获取或释放arg所指向的锁   如果无法将该锁授予调用进程将立即返回EACCES或EAGAIN错误而不阻塞
+
+F_SETLWK 与上衣个命令类似 不过是阻塞的
+
+F_GETLK  查看锁的信息  查看到的结果会保存在 arg参数中
+
+文件锁是劝告性的锁  不判断锁的用户也能修改锁定的内容(不会拒绝访问呢的)  所以这个锁是需要所有进程自行遵守的
+
+
+也可设置为强制性所  要对上锁文件取消组执行权限加上 sgid权限 用命令 chmod g+s file
+
+
+读出锁和写入所
+
+
+

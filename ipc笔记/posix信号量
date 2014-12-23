@@ -1,0 +1,47 @@
+这个信号量就是我们操作系统里面所学得信号量  
+挂出(post)信号量 就是将其值+1 
+
+有二值信号量 信号的值为 0和1 
+
+还有计数信号量  信号量的值可以为N
+#include <semaphore.h>
+
+sem_t *sem_open(const char *name,int oflag,.../* mode_t mode ,
+         unsigned int value*/);
+    成功返回指向信号量的指针,若出错则为SEM_FAILED
+  value参数指定初始值 oflag: 0 ,O_CREAT 或者O_CREAT|O_EXCL
+int sem_close (sem_t *sem)
+    成功返回0  失败返回-1    进程结束(不论资源结束还是被动结束都会执行 )  关闭并不从内核中删除该信号量
+
+删除有名信号了的函数
+int sem_unlink(const char *name); 
+   
+每个信号了都有记录打开次数  close会减少该次数  unlink会删除该name的文件 但是系够要在引用为0时
+
+
+int sem_wait(sem_t *);
+int sem_trywait(sem_t *);
+
+挂出
+int sem_post(sem_t *sem);
+int sem_getvalue(sem_t *sem,int *valp);
+   成功返回0 失败-1
+
+
+创建无名信号量
+
+#include <semaphore.h>
+
+int sem_init(sem_t *sem,int shared,unsigned int value);
+     失败时候返回-1  成功不返回0  这很奇怪
+
+int sem_destory(sem_t *sem);
+     成功返回0 失败返回-1
+
+Posix信号量的两个限制
+SEM_NSEMS_MAX  一个进程可以打开的最大的信号量
+SEM_VALUE_MAX  一个信号量的最大值  在<unistd.h> 中定义
+
+shared参数为0 表示在同一进程中的线程共享  其他值指在进程间共享
+
+
